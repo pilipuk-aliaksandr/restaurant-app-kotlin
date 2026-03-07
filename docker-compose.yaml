@@ -1,0 +1,180 @@
+services:
+  postgres:
+    image: postgis/postgis:12-2.5-alpine
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./init:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: [ "CMD-SHELL", "psql postgresql://postgres@:5432/postgres -c 'select 1;'" ]
+      interval: 10s
+      timeout: 3s
+      retries: 15
+
+  liquibase-orders:
+    image: liquibase/liquibase:4.6.2
+    container_name: liquibase-orders
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./databases/orders:/databases/orders
+    command: >
+      liquibase
+        --logLevel=INFO
+        --driver=org.postgresql.Driver
+        --classpath="/databases/orders/"
+        --changeLogFile="changelog.xml"
+        --url="jdbc:postgresql://postgres:5432/postgres"
+        --username=postgres
+        --password=postgres
+        --defaultSchemaName=orders
+      update
+
+  liquibase-kitchens:
+    image: liquibase/liquibase:4.6.2
+    container_name: liquibase-kitchens
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./databases/kitchens:/databases/kitchens
+    command: >
+      liquibase
+        --logLevel=INFO
+        --driver=org.postgresql.Driver
+        --classpath="/databases/kitchens/"
+        --changeLogFile="changelog.xml"
+        --url="jdbc:postgresql://postgres:5432/postgres"
+        --username=postgres
+        --password=postgres
+        --defaultSchemaName=kitchens
+      update
+
+  liquibase-outbox:
+    image: liquibase/liquibase:4.6.2
+    container_name: liquibase-outbox
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./databases/outboxes:/databases/outboxes
+    command: >
+      liquibase
+        --logLevel=INFO
+        --driver=org.postgresql.Driver
+        --classpath="/databases/outboxes/"
+        --changeLogFile="changelog.xml"
+        --url="jdbc:postgresql://postgres:5432/postgres"
+        --username=postgres
+        --password=postgres
+        --defaultSchemaName=common_outbox
+      update
+
+  liquibase-users:
+    image: liquibase/liquibase:4.6.2
+    container_name: liquibase-users
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./databases/users:/databases/users
+    command: >
+      liquibase
+        --logLevel=INFO
+        --driver=org.postgresql.Driver
+        --classpath="/databases/users/"
+        --changeLogFile="changelog.xml"
+        --url="jdbc:postgresql://postgres:5432/postgres"
+        --username=postgres
+        --password=postgres
+        --defaultSchemaName=users
+      update
+
+  kafka-1:
+    image: apache/kafka:4.0.1
+    container_name: kafka-1
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_NODE_ID: 1
+      # Настройки узла
+      KAFKA_PROCESS_ROLES: 'broker,controller'
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: 'CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,EXTERNAL:PLAINTEXT'
+      KAFKA_CONTROLLER_QUORUM_VOTERS: '1@kafka-1:9093,2@kafka-2:9093,3@kafka-3:9093'
+      # Настройки слушателей
+      # PLAINTEXT - служебный порт для других контейнеров (например, KAFKA-UI)
+      # CONTROLLER - порт служебной связи контроллеров
+      # EXTERNAL - порт для запросов от клиента
+      KAFKA_LISTENERS: 'PLAINTEXT://:29092,CONTROLLER://:9093,EXTERNAL://:9092'
+      KAFKA_ADVERTISED_LISTENERS: 'PLAINTEXT://kafka-1:29092,EXTERNAL://localhost:9092'
+      KAFKA_CONTROLLER_LISTENER_NAMES: 'CONTROLLER'
+      # Тайм-ауты для стабильности
+      KAFKA_CONTROLLER_QUORUM_FETCH_TIMEOUT_MS: 30000
+      KAFKA_CONTROLLER_QUORUM_ELECTION_TIMEOUT_MS: 30000
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
+      CLUSTER_ID: '4L6g3nShT-eMCtK--X86sw'
+
+  kafka-2:
+    image: apache/kafka:4.0.1
+    container_name: kafka-2
+    ports:
+      - "9093:9092"
+    environment:
+      # Настройки узла
+      KAFKA_NODE_ID: 2
+      KAFKA_PROCESS_ROLES: 'broker,controller'
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: 'CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,EXTERNAL:PLAINTEXT'
+      KAFKA_CONTROLLER_QUORUM_VOTERS: '1@kafka-1:9093,2@kafka-2:9093,3@kafka-3:9093'
+      # Настройки слушателей
+      # PLAINTEXT - служебный порт для других контейнеров (например, KAFKA-UI)
+      # CONTROLLER - порт служебной связи контроллеров
+      # EXTERNAL - порт для запросов от клиента
+      KAFKA_LISTENERS: 'PLAINTEXT://:29092,CONTROLLER://:9093,EXTERNAL://:9092'
+      KAFKA_ADVERTISED_LISTENERS: 'PLAINTEXT://kafka-2:29092,EXTERNAL://localhost:9093'
+      KAFKA_CONTROLLER_LISTENER_NAMES: 'CONTROLLER'
+      # Тайм-ауты для стабильности
+      KAFKA_CONTROLLER_QUORUM_FETCH_TIMEOUT_MS: 30000
+      KAFKA_CONTROLLER_QUORUM_ELECTION_TIMEOUT_MS: 30000
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
+      CLUSTER_ID: '4L6g3nShT-eMCtK--X86sw'
+
+  kafka-3:
+    image: apache/kafka:4.0.1
+    container_name: kafka-3
+    ports:
+      - "9094:9092"
+    environment:
+      # Настройки узла
+      KAFKA_NODE_ID: 3
+      KAFKA_PROCESS_ROLES: 'broker,controller'
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: 'CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,EXTERNAL:PLAINTEXT'
+      KAFKA_CONTROLLER_QUORUM_VOTERS: '1@kafka-1:9093,2@kafka-2:9093,3@kafka-3:9093'
+      # Настройки слушателей
+      # PLAINTEXT - служебный порт для других контейнеров (например, KAFKA-UI)
+      # CONTROLLER - порт служебной связи контроллеров
+      # EXTERNAL - порт для запросов от клиента
+      KAFKA_LISTENERS: 'PLAINTEXT://:29092,CONTROLLER://:9093,EXTERNAL://:9092'
+      KAFKA_ADVERTISED_LISTENERS: 'PLAINTEXT://kafka-3:29092,EXTERNAL://localhost:9094'
+      KAFKA_CONTROLLER_LISTENER_NAMES: 'CONTROLLER'
+      # Тайм-ауты для стабильности
+      KAFKA_CONTROLLER_QUORUM_FETCH_TIMEOUT_MS: 30000
+      KAFKA_CONTROLLER_QUORUM_ELECTION_TIMEOUT_MS: 30000
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
+      CLUSTER_ID: '4L6g3nShT-eMCtK--X86sw'
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: kafka-ui
+    ports:
+      - "8090:8080"
+    environment:
+      KAFKA_CLUSTERS_0_NAME: local-cluster
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka-1:29092,kafka-2:29092,kafka-3:29092
+    depends_on:
+      - kafka-1
+      - kafka-2
+      - kafka-3
