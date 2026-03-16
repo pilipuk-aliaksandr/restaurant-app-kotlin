@@ -16,7 +16,7 @@
             <column name="item_name" type="TEXT">
                 <constraints nullable="false"/>
             </column>
-            <column name="active" type="BOOLEAN" defaultValueBoolean="true">
+            <column name="active" type="BOOLEAN">
                 <constraints nullable="false"/>
             </column>
             <column name="created_at" type="TIMESTAMP WITHOUT TIMEZONE">
