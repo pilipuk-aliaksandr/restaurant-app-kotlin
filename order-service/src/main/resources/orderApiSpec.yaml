@@ -86,6 +86,10 @@ components:
         - tableNumber
         - items
       properties:
+        age:
+          maximum: 18
+          type: integer
+          format: int32
         tableNumber:
           type: integer
           format: int32

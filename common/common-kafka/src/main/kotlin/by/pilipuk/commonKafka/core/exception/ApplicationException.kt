@@ -1,4 +1,4 @@
-package by.pilipuk.order.exception
+package by.pilipuk.commonKafka.core.exception
 
 import by.pilipuk.commonCore.core.exception.base.BaseApplicationException
 import by.pilipuk.commonCore.model.dto.ExceptionContext
@@ -11,9 +11,9 @@ class ApplicationException private constructor(
 ) : BaseApplicationException(code, logLevel, exceptionContext) {
 
     companion object {
-        private const val CODE = "ORDER_APPLICATION_EXCEPTION"
+        private const val CODE = "COMMON-KAFKA_APPLICATION_EXCEPTION"
 
-        fun create(code: ApplicationExceptionCode, param: Any): ApplicationException {
+        fun create(code: by.pilipuk.commonKafka.core.exception.ApplicationExceptionCode, param: Any): ApplicationException {
             val context = ExceptionContext.create(code.name)
                 .add(code.key, param)
 

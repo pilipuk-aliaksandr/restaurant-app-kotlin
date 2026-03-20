@@ -1,7 +1,7 @@
-package by.pilipuk.order.exception
+package by.pilipuk.commonKafka.core.exception
 
 import io.github.oshai.kotlinlogging.Level
 
 enum class ApplicationExceptionCode(val level: Level, val key: String) {
-    NOT_FOUND_BY_ID(Level.INFO, "id")
+    FAILED_MESSAGING_TO_KAFKA(Level.INFO, "id"),
 }

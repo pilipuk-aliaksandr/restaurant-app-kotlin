@@ -5,6 +5,7 @@ import by.pilipuk.kitchen.core.exception.ApplicationExceptionCode
 import by.pilipuk.kitchen.model.entity.OrderItem
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.repository.findByIdOrNull
+import java.util.Optional
 
 interface OrderItemRepository : JpaRepository<OrderItem, Long> {
 
@@ -12,4 +13,6 @@ interface OrderItemRepository : JpaRepository<OrderItem, Long> {
         return findByIdOrNull(id)
             ?: throw ApplicationException.create(ApplicationExceptionCode.NOT_FOUND_BY_ID, id)
     }
+
+    fun findFirstByCookedFalseOrderByCreatedAtAsc(): OrderItem?
 }
