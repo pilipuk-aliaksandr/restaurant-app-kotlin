@@ -45,8 +45,3 @@ spring:
           json_format_mapper: jackson
         jdbc:
           time_zone: UTC
-
-logging:
-  level:
-    org.springframework.security: TRACE
-    org.springframework.web: DEBUG

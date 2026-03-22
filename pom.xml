@@ -14,7 +14,6 @@
         <module>api-gateway</module>
         <module>common</module>
         <module>common/common-core</module>
-        <module>common/common-kafka</module>
     </modules>
 
     <properties>

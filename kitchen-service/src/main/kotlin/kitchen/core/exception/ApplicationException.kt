@@ -2,12 +2,12 @@ package by.pilipuk.kitchen.core.exception
 
 import by.pilipuk.commonCore.core.exception.base.BaseApplicationException
 import by.pilipuk.commonCore.model.dto.ExceptionContext
-import org.slf4j.event.Level
+import io.github.oshai.kotlinlogging.Level
 
 class ApplicationException private constructor(
     logLevel: Level,
     exceptionContext: ExceptionContext,
-    code: String = CODE
+    code: String
 ) : BaseApplicationException(code, logLevel, exceptionContext) {
 
     companion object {
@@ -17,7 +17,7 @@ class ApplicationException private constructor(
             val context = ExceptionContext.create(code.name)
                 .add(code.key, param)
 
-            return ApplicationException(code.level, context)
+            return ApplicationException(code.level, context, CODE)
         }
     }
 }

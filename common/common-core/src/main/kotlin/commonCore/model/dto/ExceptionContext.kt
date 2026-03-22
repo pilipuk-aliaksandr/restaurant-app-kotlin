@@ -18,6 +18,9 @@ data class ExceptionContext(
     }
 
     fun add(key: String, value: Any?): ExceptionContext = apply {
+        if (parameters == null) {
+            parameters = mutableMapOf()
+        }
         parameters?.put(key, value ?: "null")
     }
 }
