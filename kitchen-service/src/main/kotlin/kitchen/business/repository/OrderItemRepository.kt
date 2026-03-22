@@ -12,4 +12,6 @@ interface OrderItemRepository : JpaRepository<OrderItem, Long> {
         return findByIdOrNull(id)
             ?: throw ApplicationException.create(ApplicationExceptionCode.NOT_FOUND_BY_ID, id)
     }
+
+    fun findFirstByCookedFalseOrderByCreatedAtAsc(): OrderItem?
 }

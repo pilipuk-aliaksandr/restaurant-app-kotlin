@@ -1,7 +1,7 @@
 package by.pilipuk.commonCore.core.exception.base
 
 import by.pilipuk.commonCore.model.dto.ExceptionContext
-import org.slf4j.event.Level
+import io.github.oshai.kotlinlogging.Level
 
 abstract class BaseApplicationException (
     val code: String,
