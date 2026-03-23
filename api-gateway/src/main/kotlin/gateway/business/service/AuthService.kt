@@ -24,9 +24,9 @@ class AuthService(
         )
 
         return userDetailsServiceImpl.loadUserByUsername(authRequest.username).let {
-            userDetailsDto -> userDetailsDto.toAuthResponse(
-            jwtTokenProvider.generateAccessToken(userDetailsDto),
-            jwtTokenProvider.generateRefreshToken(userDetailsDto)
+            it.toAuthResponse(
+                jwtTokenProvider.generateAccessToken(it),
+                jwtTokenProvider.generateRefreshToken(it)
             )
         }
     }

@@ -1,6 +1,6 @@
 package by.pilipuk.order.business.mapper
 
-import by.pilipuk.commonCore.core.util.toJson
+import by.pilipuk.commonCore.core.util.Json.toJson
 import by.pilipuk.commonKafka.model.dto.OrderCreatedEvent
 import by.pilipuk.commonKafka.model.entity.OutboxEvent
 import by.pilipuk.order.dto.OrderDto

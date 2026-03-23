@@ -13,22 +13,20 @@ class EventSender(
     val outboxEventRepository: OutboxEventRepository,
     val kafkaTemplate: KafkaTemplate<String, Any>
 ) {
+    val log = KotlinLogging.logger {}
+
     @Transactional
-    fun sendOutboxEvent(): Boolean {
-        val event = outboxEventRepository.findNextForProcessing() ?: return false
-        val log = KotlinLogging.logger {}
-
-        return try {
-            kafkaTemplate.send(event.topic,event.orderId,event.payload).get()
-
-            event.active = false
-            outboxEventRepository.save(event)
-
-            true
-        } catch (e: Exception) {
-            log.error( e) {"Failed to send event: ${event.orderId}, ${e.message}"}
-            throw ApplicationException.create(
-                ApplicationExceptionCode.FAILED_MESSAGING_TO_KAFKA, e)
-        }
-    }
+    fun sendOutboxEvent(): Boolean =
+        outboxEventRepository.findNextForProcessing()?.let {
+            return try {
+                kafkaTemplate.send(it.topic,it.orderId,it.payload).get()
+                it.active = false
+                outboxEventRepository.save(it)
+                true
+            } catch (e: Exception) {
+                log.error( e) {"Failed to send event: ${it.orderId}, ${e.message}"}
+                throw ApplicationException.create(
+                    ApplicationExceptionCode.FAILED_MESSAGING_TO_KAFKA, e)
+            }
+        } ?: false
 }
