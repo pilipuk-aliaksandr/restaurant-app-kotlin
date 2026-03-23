@@ -22,10 +22,11 @@ class OrderService(val orderRepository: OrderRepository, val outboxEventReposito
 
     fun create(orderWriteDto: OrderWriteDto): OrderDto {
         val savedOrder = orderWriteDto.toEntity()
-            .let { entity -> orderRepository.save(entity) }
+            .let { orderRepository.save(it) }
+
         savedOrder.toOutboxEvent()
-            .let { event -> outboxEventRepository.save(event) }
-        log.info {"The order: ${savedOrder.id} is created at ${LocalDateTime.now()}}"}
+            .let { outboxEventRepository.save(it) }
+            .also { log.info {"The order: ${savedOrder.id} is created at ${LocalDateTime.now()}}"} }
 
         return savedOrder.toDto()
     }
@@ -44,10 +45,10 @@ class OrderService(val orderRepository: OrderRepository, val outboxEventReposito
     }
 
     fun acceptCookedOrders(orderReadyEvent: OrderReadyEvent) {
-        val order = orderRepository.findByIdOrThrow(orderReadyEvent.orderId)
 
-        order.status = Status.READY
-        orderRepository.save(order)
-        log.info {"The order: ${orderReadyEvent.orderId} is cooked at ${LocalDateTime.now()}}"}
+        orderRepository.findByIdOrThrow(orderReadyEvent.orderId)
+            .apply { status = Status.READY }
+            .let { orderRepository.save(it) }
+            .also { log.info { "The order: ${orderReadyEvent.orderId} is cooked at ${LocalDateTime.now()}}" } }
     }
 }

@@ -9,13 +9,10 @@ class OutboxEventSchedulerService(val eventSender: EventSender) {
     @Scheduled(fixedDelay = 5000)
     fun processOutbox() {
         repeat(50) {
-            runCatching {
-                eventSender.sendOutboxEvent()
-            }.getOrElse {
-                return
-            }.let { processed ->
-                if (!processed) return
-            }
+            runCatching { eventSender.sendOutboxEvent() }
+                .getOrNull()
+                takeIf { true }
+                ?: return@repeat
         }
     }
 }

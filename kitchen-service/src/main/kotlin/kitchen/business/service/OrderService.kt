@@ -26,7 +26,9 @@ class OrderService(
     val log = KotlinLogging.logger {}
 
     fun findById(id: Long): OrderDto {
-        return orderRepository.findByIdOrThrow(id).toDto()
+
+        return orderRepository.findByIdOrThrow(id)
+            .toDto()
     }
 
     fun findOrders(orderRequestDto: OrderRequestDto): List<OrderDto> {
@@ -38,7 +40,8 @@ class OrderService(
 
     @Transactional
     fun processed() {
-        val item = orderItemRepository.findFirstByCookedFalseOrderByCreatedAtAsc() ?: return
+        val item = orderItemRepository.findFirstByCookedFalseOrderByCreatedAtAsc()
+            ?: return
 
         item.cooked = true
         log.info {"The item: ${item.name} is cooked at ${LocalDateTime.now()}}"}
@@ -53,8 +56,7 @@ class OrderService(
             order.status = Status.COMPLETED
             log.info {"The order: ${order.orderId} is cooked at ${LocalDateTime.now()}}"}
 
-            val event = order.toOutboxEvent()
-            outboxEventRepository.save(event)
+            outboxEventRepository.save(order.toOutboxEvent())
         }
     }
 
@@ -62,7 +64,8 @@ class OrderService(
     fun acceptNewOrder(orderCreatedEvent: OrderCreatedEvent) {
         val order = orderCreatedEvent.toEntity()
         order.status = Status.ACCEPTED
-        orderRepository.save(order)
-        log.info {"The new order: ${orderCreatedEvent.orderId} is accepted at ${LocalDateTime.now()}}"}
+        orderRepository.save(order).also {
+            log.info { "The new order: ${orderCreatedEvent.orderId} is accepted at ${LocalDateTime.now()}}" }
+        }
     }
 }
