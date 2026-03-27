@@ -1,14 +1,14 @@
-package by.pilipuk.kitchen.entrypoint.cron
+package by.pilipuk.kitchen.entrypoint.scheduler
 
 import by.pilipuk.kitchen.business.service.OrderService
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 
 @Component
-class KitchenCron(val orderService: OrderService) {
+class KitchenScheduler(private val orderService: OrderService) {
 
     @Scheduled(fixedDelay = 10000)
-    fun cookOneItem() {
+    fun cookOneItemSchedule() {
         orderService.processed()
     }
 }

@@ -1,7 +1,7 @@
 package by.pilipuk.commonCore.entrypoint
 
 import by.pilipuk.commonCore.core.exception.base.BaseApplicationException
-import by.pilipuk.commonCore.core.mapper.ExceptionMapper.toDto
+import by.pilipuk.commonCore.core.mapper.toDto
 import by.pilipuk.commonCore.model.dto.ExceptionDto
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.github.oshai.kotlinlogging.Level

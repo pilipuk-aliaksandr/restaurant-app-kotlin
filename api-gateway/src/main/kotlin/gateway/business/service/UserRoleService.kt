@@ -5,7 +5,7 @@ import by.pilipuk.gateway.model.entity.UserRole
 import org.springframework.stereotype.Service
 
 @Service
-class UserRoleService(val userRoleRepository: UserRoleRepository) {
+class UserRoleService(private val userRoleRepository: UserRoleRepository) {
 
     fun setRole_USER_ROLE(): UserRole {
         return userRoleRepository.findByIdOrElseThrow(1);
