@@ -1,13 +1,12 @@
 package by.pilipuk.commonCore.model.entity
 
-import jakarta.persistence.GeneratedValue
-import jakarta.persistence.GenerationType
-import jakarta.persistence.Id
-import jakarta.persistence.MappedSuperclass
-import jakarta.persistence.Column
+import jakarta.persistence.*
+import org.springframework.data.annotation.LastModifiedDate
+import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import java.time.LocalDateTime
 
 @MappedSuperclass
+@EntityListeners(AuditingEntityListener::class)
 open class BaseEntity {
 
     @Id
@@ -20,6 +19,7 @@ open class BaseEntity {
     var createdAt: LocalDateTime = LocalDateTime.now()
 
     @Column(name = "updated_at")
+    @LastModifiedDate
     var updatedAt: LocalDateTime? = null
 
     override fun equals(other: Any?): Boolean {

@@ -5,7 +5,7 @@ import org.springframework.kafka.annotation.KafkaListener
 import org.springframework.stereotype.Component
 
 @Component
-class OrderListener(val orderService: OrderService) {
+class OrderListener(private val orderService: OrderService) {
 
     @KafkaListener(topics = ["ready_orders"], groupId = "orders-group")
     fun listen(orderReadyEvent: by.pilipuk.commonKafka.model.dto.OrderReadyEvent) {

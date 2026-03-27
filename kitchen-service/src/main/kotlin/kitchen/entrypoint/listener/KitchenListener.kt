@@ -6,7 +6,7 @@ import org.springframework.kafka.annotation.KafkaListener
 import org.springframework.stereotype.Component
 
 @Component
-class KitchenListener(val orderService: OrderService) {
+class KitchenListener(private val orderService: OrderService) {
 
     @KafkaListener(topics = ["orders"], groupId = "kitchen-group")
     fun listen(orderCreatedEvent: OrderCreatedEvent) {

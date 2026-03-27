@@ -9,7 +9,10 @@ import by.pilipuk.gateway.dto.UserWriteDto
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-class AuthController(val userService: UserService, val authService: AuthService) : AuthApi {
+class AuthController(
+    private val userService: UserService,
+    private val authService: AuthService
+) : AuthApi {
 
     override fun login(authRequest: AuthRequest): AuthResponse {
         return authService.login(authRequest)

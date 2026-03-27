@@ -10,10 +10,10 @@ import org.springframework.transaction.annotation.Transactional
 
 @Service
 class EventSender(
-    val outboxEventRepository: OutboxEventRepository,
-    val kafkaTemplate: KafkaTemplate<String, Any>
+    private val outboxEventRepository: OutboxEventRepository,
+    private val kafkaTemplate: KafkaTemplate<String, Any>
 ) {
-    val log = KotlinLogging.logger {}
+    private val log = KotlinLogging.logger {}
 
     @Transactional
     fun sendOutboxEvent(): Boolean =

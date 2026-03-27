@@ -1,6 +1,6 @@
 package by.pilipuk.gateway.business.service
 
-import by.pilipuk.gateway.business.mapper.AuthMapper.toAuthResponse
+import by.pilipuk.gateway.business.mapper.toAuthResponse
 import by.pilipuk.gateway.core.security.JwtTokenProvider
 import by.pilipuk.gateway.dto.AuthRequest
 import by.pilipuk.gateway.dto.AuthResponse
@@ -10,9 +10,9 @@ import org.springframework.stereotype.Service
 
 @Service
 class AuthService(
-    val authenticationManager: AuthenticationManager,
-    val userDetailsServiceImpl: UserDetailsServiceImpl,
-    val jwtTokenProvider: JwtTokenProvider
+    private val authenticationManager: AuthenticationManager,
+    private val userDetailsServiceImpl: UserDetailsServiceImpl,
+    private val jwtTokenProvider: JwtTokenProvider
 ) {
 
     fun login(authRequest: AuthRequest): AuthResponse {
