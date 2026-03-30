@@ -2,10 +2,10 @@ package by.pilipuk.kitchen.business.service
 
 import by.pilipuk.commonKafka.business.repository.OutboxEventRepository
 import by.pilipuk.commonKafka.model.dto.OrderCreatedEvent
-import by.pilipuk.kitchen.business.mapper.OrderMapper.toDto
-import by.pilipuk.kitchen.business.mapper.OrderMapper.toEntity
-import by.pilipuk.kitchen.business.mapper.OrderMapper.toOutboxEvent
-import by.pilipuk.kitchen.business.mapper.OrderSpecificationMapper
+import by.pilipuk.kitchen.business.mapper.toDto
+import by.pilipuk.kitchen.business.mapper.toEntity
+import by.pilipuk.kitchen.business.mapper.toOutboxEvent
+import by.pilipuk.kitchen.business.mapper.findOrdersByRequestDto
 import by.pilipuk.kitchen.business.repository.OrderItemRepository
 import by.pilipuk.kitchen.business.repository.OrderRepository
 import by.pilipuk.kitchen.dto.OrderDto
@@ -18,9 +18,9 @@ import java.time.LocalDateTime
 
 @Service
 class OrderService(
-    val orderRepository: OrderRepository,
-    val orderItemRepository: OrderItemRepository,
-    val outboxEventRepository: OutboxEventRepository
+    private val orderRepository: OrderRepository,
+    private val orderItemRepository: OrderItemRepository,
+    private val outboxEventRepository: OutboxEventRepository
 ) {
 
     val log = KotlinLogging.logger {}
@@ -32,7 +32,7 @@ class OrderService(
     }
 
     fun findOrders(orderRequestDto: OrderRequestDto): List<OrderDto> {
-        val spec = OrderSpecificationMapper.findOrdersByRequestDto(orderRequestDto)
+        val spec = findOrdersByRequestDto(orderRequestDto)
 
         return orderRepository.findAll(spec)
             .map { it.toDto() }

@@ -4,7 +4,7 @@ import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 
 @Service
-class OutboxEventSchedulerService(val eventSender: EventSender) {
+class OutboxEventSchedulerService(private val eventSender: EventSender) {
 
     @Scheduled(fixedDelay = 5000)
     fun processOutbox() {

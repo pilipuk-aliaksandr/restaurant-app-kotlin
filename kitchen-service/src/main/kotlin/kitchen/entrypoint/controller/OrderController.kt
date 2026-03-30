@@ -7,7 +7,7 @@ import by.pilipuk.kitchen.dto.OrderRequestDto
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-class OrderController(val orderService: OrderService) : KitchenApi {
+class OrderController(private val orderService: OrderService) : KitchenApi {
 
     override fun findById(id: Long): OrderDto {
         return orderService.findById(id)

@@ -75,6 +75,8 @@ components:
 
     OrderItemsDto:
       type: object
+      required:
+        - itemName
       properties:
         id:
           type: integer
@@ -84,6 +86,7 @@ components:
           format: int64
         itemName:
           type: string
+          nullable: false
         cooked:
           type: boolean
 

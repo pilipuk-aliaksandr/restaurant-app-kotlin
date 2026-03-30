@@ -8,7 +8,7 @@ import by.pilipuk.order.business.service.OrderService
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-class OrderController(val orderService: OrderService) : OrdersApi {
+class OrderController(private val orderService: OrderService) : OrdersApi {
 
     override fun create(orderWriteDto: OrderWriteDto): OrderDto {
         return orderService.create(orderWriteDto)
