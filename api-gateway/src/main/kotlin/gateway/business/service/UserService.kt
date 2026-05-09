@@ -5,6 +5,7 @@ import by.pilipuk.gateway.business.repository.UserRepository
 import by.pilipuk.gateway.dto.UserWriteDto
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class UserService(
@@ -12,6 +13,7 @@ class UserService(
     private val userRoleService: UserRoleService,
     private val passwordEncoder: PasswordEncoder
 ) {
+    @Transactional
     fun saveUser(userWriteDto: UserWriteDto) {
         userWriteDto.toEntity()
             .apply { password = passwordEncoder.encode(userWriteDto.password)!! }

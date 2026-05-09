@@ -7,7 +7,7 @@ servers:
   - url: 'http://localhost:8080'
 
 paths:
-  /v1/orders/new:
+  /new:
     post:
       tags:
         - Orders
@@ -30,7 +30,7 @@ paths:
         '400':
           description: Invalid input
 
-  /v1/orders:
+  /:
     post:
       tags:
         - Orders
@@ -54,7 +54,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/OrderDto'
 
-  /v1/orders/{id}:
+  /{id}:
     get:
       tags:
         - Orders
@@ -75,7 +75,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/OrderDto'
-
 
 components:
   schemas:

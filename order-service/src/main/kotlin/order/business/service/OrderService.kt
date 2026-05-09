@@ -13,6 +13,7 @@ import by.pilipuk.order.dto.OrderWriteDto
 import by.pilipuk.order.model.enum.Status
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
 
 @Service
@@ -23,6 +24,7 @@ class OrderService(
 
     private val log = KotlinLogging.logger {}
 
+    @Transactional
     fun create(orderWriteDto: OrderWriteDto): OrderDto {
         val savedOrder = orderWriteDto.toEntity()
             .let { orderRepository.save(it) }
@@ -34,12 +36,14 @@ class OrderService(
         return savedOrder.toDto()
     }
 
+    @Transactional(readOnly = true)
     fun findById(id: Long): OrderDto {
 
         return orderRepository.findByIdOrThrow(id)
             .toDto()
     }
 
+    @Transactional(readOnly = true)
     fun findOrders(orderRequestDto: OrderRequestDto): List<OrderDto> {
         val spec = findOrdersByRequestDto(orderRequestDto)
 
@@ -47,6 +51,7 @@ class OrderService(
             .map { it.toDto() }
     }
 
+    @Transactional
     fun acceptCookedOrders(orderReadyEvent: OrderReadyEvent) {
 
         orderRepository.findByIdOrThrow(orderReadyEvent.orderId)

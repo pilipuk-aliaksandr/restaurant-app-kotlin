@@ -12,7 +12,7 @@ import jakarta.persistence.Table
 
 @Entity
 @Table(name = "orders")
-open class Order : BaseEntity() {
+class Order : BaseEntity() {
 
     @Column(name = "table_number")
     var tableNumber: Int = 0

@@ -4,7 +4,7 @@ import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 
 data class UserDetailsDto(
-    val id: Long,
+    val id: Long?,
     private val username: String,
     private val password: String,
     private val authorities: Collection<GrantedAuthority>

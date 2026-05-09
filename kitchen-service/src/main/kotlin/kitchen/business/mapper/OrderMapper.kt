@@ -6,7 +6,6 @@ import by.pilipuk.commonKafka.model.dto.OrderReadyEvent
 import by.pilipuk.commonKafka.model.entity.OutboxEvent
 import by.pilipuk.kitchen.dto.OrderDto
 import by.pilipuk.kitchen.model.entity.Order
-import by.pilipuk.kitchen.model.entity.OrderItem
 import by.pilipuk.kitchen.model.enums.Status
 
 fun Order.toDto() = OrderDto(
@@ -18,7 +17,7 @@ fun Order.toDto() = OrderDto(
 )
 
 fun Order.toReadyEvent() = OrderReadyEvent().apply {
-    orderId = this@toReadyEvent.id
+    orderId = this@toReadyEvent.id!!
     items = this@toReadyEvent.items.map { it -> it.name }
 }
 
