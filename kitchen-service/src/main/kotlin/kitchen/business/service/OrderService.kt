@@ -25,12 +25,14 @@ class OrderService(
 
     val log = KotlinLogging.logger {}
 
+    @Transactional(readOnly = true)
     fun findById(id: Long): OrderDto {
 
         return orderRepository.findByIdOrThrow(id)
             .toDto()
     }
 
+    @Transactional(readOnly = true)
     fun findOrders(orderRequestDto: OrderRequestDto): List<OrderDto> {
         val spec = findOrdersByRequestDto(orderRequestDto)
 

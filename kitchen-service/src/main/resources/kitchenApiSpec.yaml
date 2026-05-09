@@ -4,10 +4,10 @@ info:
   description: Kitchen Order Service Api
   version: 1.0.0
 servers:
-  - url: 'http://localhost:8082'
+  - url: 'http://localhost:8081'
 
 paths:
-  /v1/kitchen/orders:
+  /orders:
     post:
       tags:
         - Kitchen
@@ -31,7 +31,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/OrderDto'
 
-  /v1/kitchen/orders/{id}:
+  /orders/{id}:
     get:
       tags:
         - Kitchen

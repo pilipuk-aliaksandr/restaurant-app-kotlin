@@ -54,6 +54,15 @@ class SecurityConfig(private val jwtTokenProvider: JwtTokenProvider) {
             authorizeHttpRequests {
                 authorize("/v1/login", permitAll)
                 authorize("/v1/registration", permitAll)
+                authorize("/v3/api-docs/**", permitAll)
+                authorize("/swagger-ui/**", permitAll)
+
+                authorize("/v1/kitchen/swagger-ui/**", permitAll)
+                authorize("/v1/kitchen/v3/api-docs",permitAll)
+
+                authorize("/v1/orders/v3/api-docs", permitAll)
+                authorize("/v1/orders/swagger-ui/**", permitAll)
+
                 authorize(anyRequest, authenticated)
             }
 
