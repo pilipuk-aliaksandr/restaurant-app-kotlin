@@ -16,6 +16,7 @@
         <kotlin.code.style>official</kotlin.code.style>
         <kotlin.version>2.3.10</kotlin.version>
         <kotlin.compiler.jvmTarget>21</kotlin.compiler.jvmTarget>
+        <testcontainers.version>2.0.5</testcontainers.version>
     </properties>
 
     <repositories>
@@ -87,28 +88,30 @@
             <plugin>
                 <groupId>org.openapitools</groupId>
                 <artifactId>openapi-generator-maven-plugin</artifactId>
-                <version>7.18.0</version> <executions>
-                <execution>
-                    <goals>
-                        <goal>generate</goal>
-                    </goals>
-                    <configuration>
-                        <inputSpec>${project.basedir}/src/main/resources/orderApiSpec.yaml</inputSpec>
-                        <generatorName>kotlin-spring</generatorName>
-                        <apiPackage>by.pilipuk.order.api</apiPackage>
-                        <modelPackage>by.pilipuk.order.dto</modelPackage>
-                        <library>spring-boot</library>
-                        <configurationFile>${project.basedir}/src/main/resources/orderApiSpec.yaml</configurationFile>
-                        <configOptions>
-                            <interfaceOnly>true</interfaceOnly>
-                            <useSpringBoot3>true</useSpringBoot3>
-                            <useTags>true</useTags>
-                            <openApiNullable>false</openApiNullable>
-                            <useResponseEntity>false</useResponseEntity>
-                        </configOptions>
-                    </configuration>
-                </execution>
-            </executions>
+                <version>7.18.0</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <inputSpec>${project.basedir}/src/main/resources/orderApiSpec.yaml</inputSpec>
+                            <generatorName>kotlin-spring</generatorName>
+                            <apiPackage>by.pilipuk.order.api</apiPackage>
+                            <modelPackage>by.pilipuk.order.dto</modelPackage>
+                            <library>spring-boot</library>
+                            <configurationFile>${project.basedir}/src/main/resources/orderApiSpec.yaml
+                            </configurationFile>
+                            <configOptions>
+                                <interfaceOnly>true</interfaceOnly>
+                                <useSpringBoot3>true</useSpringBoot3>
+                                <useTags>true</useTags>
+                                <openApiNullable>false</openApiNullable>
+                                <useResponseEntity>false</useResponseEntity>
+                            </configOptions>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
 
             <plugin>
@@ -146,6 +149,14 @@
 
         <dependency>
             <groupId>by.pilipuk</groupId>
+            <artifactId>common-core</artifactId>
+            <version>${project.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>by.pilipuk</groupId>
             <artifactId>common-kafka</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -158,6 +169,51 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webmvc-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>testcontainers-junit-jupiter</artifactId>
+            <version>${testcontainers.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>testcontainers-postgresql</artifactId>
+            <version>${testcontainers.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>testcontainers-kafka</artifactId>
+            <version>${testcontainers.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-testcontainers</artifactId>
+            <scope>test</scope>
         </dependency>
 
         <dependency>
