@@ -4,12 +4,17 @@ info:
   description: |-
     A User API registration to get some rooms in hotels
   version: 1.0-SNAPSHOT
+  contact:
+    name: Alexander Pilipuk
+    email: sashapilipuk@yandex.by
 servers:
-  - url: https://localhost:8080
+  - url: https://localhost:8082
+
 paths:
   /v1/registration:
     post:
       summary: Register a new user
+      description: Creates a new user profile in the system. Passwords are encrypted before storage
       operationId: registerNewUser
       tags:
         - auth
@@ -22,10 +27,15 @@ paths:
       responses:
         '201':
           description: User successfully created
+        '400':
+          description: Validation error (e.g., username already exists or invalid format)
+        '500':
+          description: Internal server error
 
   /v1/login:
     post:
       summary: Authentication of existing users
+      description: Verifies credentials and issues a pair of Access and Refresh JWT tokens
       operationId: login
       tags:
         - auth
@@ -42,6 +52,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/AuthResponse'
+        '401':
+          description: Invalid username or password
 
 
 components:
@@ -54,9 +66,15 @@ components:
       properties:
         username:
           type: string
+          minLength: 3
+          maxLength: 50
+          example: "JohnDoe"
         password:
           type: string
           format: password
+          minLength: 8
+          description: Must be at least 8 characters long
+          example: "StrongPassword123!"
 
     AuthRequest:
       type: object
@@ -66,9 +84,11 @@ components:
       properties:
         username:
           type: string
+          example: "JohnDoe"
         password:
           type: string
           format: password
+          example: "StrongPassword123!"
 
     AuthResponse:
       type: object
@@ -76,9 +96,15 @@ components:
         id:
           type: integer
           format: int64
+          example: 1
         username:
           type: string
+          example: "JohnDoe"
         accessToken:
           type: string
+          description: JWT Access Token (expires in 60 minutes)
+          example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
         refreshToken:
           type: string
+          description: Token used to obtain a new access token (expires in 30 days)
+          example: "def456-abc123-token-example"
