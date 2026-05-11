@@ -1,13 +1,13 @@
 services:
   postgres:
-    image: postgis/postgis:12-2.5-alpine
+    image: postgres:14-alpine
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
     ports:
       - "5432:5432"
     volumes:
-      - ./init:/docker-entrypoint-initdb.d
+      - ./common/common-db/src/main/resources/init:/docker-entrypoint-initdb.d
     healthcheck:
       test: [ "CMD-SHELL", "psql postgresql://postgres@:5432/postgres -c 'select 1;'" ]
       interval: 10s
@@ -21,12 +21,12 @@ services:
       postgres:
         condition: service_healthy
     volumes:
-      - ./databases/orders:/databases/orders
+      - ./common/common-db/src/main/resources/db/changelog/db/orders:/liquibase/changelog
     command: >
       liquibase
         --logLevel=INFO
         --driver=org.postgresql.Driver
-        --classpath="/databases/orders/"
+        --classpath=/liquibase/changelog
         --changeLogFile="changelog.xml"
         --url="jdbc:postgresql://postgres:5432/postgres"
         --username=postgres
@@ -41,13 +41,13 @@ services:
       postgres:
         condition: service_healthy
     volumes:
-      - ./databases/kitchens:/databases/kitchens
+      - ./common/common-db/src/main/resources/db/changelog/db/kitchens:/liquibase/changelog
     command: >
       liquibase
         --logLevel=INFO
         --driver=org.postgresql.Driver
-        --classpath="/databases/kitchens/"
-        --changeLogFile="changelog.xml"
+        --classpath=/liquibase/changelog
+        --changeLogFile=changelog.xml
         --url="jdbc:postgresql://postgres:5432/postgres"
         --username=postgres
         --password=postgres
@@ -61,12 +61,12 @@ services:
       postgres:
         condition: service_healthy
     volumes:
-      - ./databases/outboxes:/databases/outboxes
+      - ./common/common-db/src/main/resources/db/changelog/db/outboxes:/liquibase/changelog
     command: >
       liquibase
         --logLevel=INFO
         --driver=org.postgresql.Driver
-        --classpath="/databases/outboxes/"
+        --classpath=/liquibase/changelog
         --changeLogFile="changelog.xml"
         --url="jdbc:postgresql://postgres:5432/postgres"
         --username=postgres
@@ -81,12 +81,12 @@ services:
       postgres:
         condition: service_healthy
     volumes:
-      - ./databases/users:/databases/users
+      - ./common/common-db/src/main/resources/db/changelog/db/users:/liquibase/changelog
     command: >
       liquibase
         --logLevel=INFO
         --driver=org.postgresql.Driver
-        --classpath="/databases/users/"
+        --classpath=/liquibase/changelog
         --changeLogFile="changelog.xml"
         --url="jdbc:postgresql://postgres:5432/postgres"
         --username=postgres

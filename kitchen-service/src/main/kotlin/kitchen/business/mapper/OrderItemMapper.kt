@@ -6,7 +6,7 @@ import by.pilipuk.kitchen.model.entity.OrderItem
 
 fun OrderItem.toDto() = OrderItemsDto(
     id = this.id,
-    orderId = this.id,
+    orderId = this.order.orderId,
     itemName = this.name,
     cooked = this.cooked,
 )
