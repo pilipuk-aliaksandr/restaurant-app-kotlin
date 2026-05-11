@@ -4,19 +4,26 @@ import by.pilipuk.commonCore.spec.entrypoint.BaseControllerTest
 import by.pilipuk.order.business.mapper.toDto
 import by.pilipuk.order.environment.service.OrderTestService
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration
+import org.springframework.boot.kafka.autoconfigure.KafkaAutoConfiguration
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.testcontainers.service.connection.ServiceConnection
+import org.springframework.test.context.ActiveProfiles
 import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
 import org.testcontainers.postgresql.PostgreSQLContainer
 import kotlin.test.Test
 
+@ActiveProfiles("test")
 @Testcontainers
 class OrderControllerTest : BaseControllerTest() {
 
     companion object {
         @Container
-        val postgres: PostgreSQLContainer = PostgreSQLContainer(
-            "postgres:14-alpine"
-        )
+        @ServiceConnection
+        @JvmStatic
+        val postgres: PostgreSQLContainer = PostgreSQLContainer("postgres:14-alpine")
+            .withInitScript("init.sql")
     }
 
     @Autowired

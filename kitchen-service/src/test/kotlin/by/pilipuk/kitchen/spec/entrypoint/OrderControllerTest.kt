@@ -5,20 +5,23 @@ import by.pilipuk.kitchen.entrypoint.scheduler.KitchenScheduler
 import by.pilipuk.kitchen.environment.service.OrderTestService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection
+import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.bean.override.mockito.MockitoBean
 import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
 import org.testcontainers.postgresql.PostgreSQLContainer
 import kotlin.test.Test
 
+@ActiveProfiles("test")
 @Testcontainers
 class OrderControllerTest : BaseControllerTest() {
 
     companion object {
         @Container
-        val postgres: PostgreSQLContainer = PostgreSQLContainer(
-            "postgres:14-alpine"
-        )
+        @ServiceConnection
+        @JvmStatic
+        val postgres: PostgreSQLContainer = PostgreSQLContainer("postgres:14-alpine")
+            .withInitScript("init.sql")
     }
 
     @Autowired

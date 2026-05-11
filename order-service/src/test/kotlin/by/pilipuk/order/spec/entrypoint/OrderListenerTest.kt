@@ -4,7 +4,9 @@ import by.pilipuk.commonCore.spec.entrypoint.BaseControllerTest
 import by.pilipuk.order.environment.service.OrderTestService
 import org.awaitility.Awaitility.await
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.testcontainers.service.connection.ServiceConnection
 import org.springframework.kafka.core.KafkaTemplate
+import org.springframework.test.context.ActiveProfiles
 import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
 import org.testcontainers.kafka.KafkaContainer
@@ -12,15 +14,20 @@ import org.testcontainers.postgresql.PostgreSQLContainer
 import java.util.concurrent.TimeUnit
 import kotlin.test.Test
 
+@ActiveProfiles("test")
 @Testcontainers
 class OrderListenerTest : BaseControllerTest() {
 
     companion object {
         @Container
-        val postgres: PostgreSQLContainer = PostgreSQLContainer(
-            "postgres:14-alpine"
-        )
+        @ServiceConnection
+        @JvmStatic
+        val postgres: PostgreSQLContainer = PostgreSQLContainer("postgres:14-alpine")
+            .withInitScript("init.sql")
 
+        @Container
+        @ServiceConnection
+        @JvmStatic
         val kafka: KafkaContainer = KafkaContainer(
             "apache/kafka:4.0.1"
         )
