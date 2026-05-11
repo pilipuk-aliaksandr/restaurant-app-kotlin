@@ -1,8 +1,13 @@
 openapi: 3.1.0
 info:
   title: Order Service Api
-  description: Order Service Api
+  description: |-
+    Main service for managing customer orders. It handles order creation, 
+    status tracking, and coordinates with the Kitchen Service via asynchronous events.
   version: 1.0.0
+  contact:
+    name: Alexander Pilipuk
+    email: sashapilipuk@yandex.by
 servers:
   - url: 'http://localhost:8080'
 
@@ -12,7 +17,9 @@ paths:
       tags:
         - Orders
       summary: Create a new order
-      description: Validates items and initiates the order process.
+      description: |-
+        Validates the order data, saves it to the database, and triggers 
+        the cooking process by publishing an OrderCreatedEvent to Kafka
       operationId: create
       requestBody:
         required: true
@@ -28,17 +35,19 @@ paths:
               schema:
                 $ref: '#/components/schemas/OrderDto'
         '400':
-          description: Invalid input
+          description: Invalid input data (e.g., empty items list or missing table number)
+        '500':
+          description: Internal server error (e.g., database or Kafka connection failure)
 
   /:
     post:
       tags:
         - Orders
       summary: Get all orders with filter criteria
-      description: Return orders details with filter criteria
+      description: Returns a list of orders matching the specified filter criteria (IDs, table numbers, status, or items)
       operationId: findOrders
       requestBody:
-        description: The search criteria
+        description: Criteria for filtering orders
         required: true
         content:
           application/json:
@@ -59,7 +68,7 @@ paths:
       tags:
         - Orders
       summary: Get order by id
-      description: Return order details by order id
+      description: Returns the full state of an order, including its items and current status
       operationId: findById
       parameters:
         - name: id
@@ -69,12 +78,14 @@ paths:
             type: integer
             format: int64
       responses:
-        200:
+        '200':
           description: Success
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/OrderDto'
+        '404':
+          description: Order not found by ID
 
 components:
   schemas:
@@ -88,8 +99,11 @@ components:
         tableNumber:
           type: integer
           format: int32
+          description: The number of the table where the order was placed
+          example: 5
         items:
           type: array
+          minItems: 1
           items:
             $ref: '#/components/schemas/OrderItemsWriteDto'
 
@@ -100,6 +114,7 @@ components:
       properties:
         itemName:
           type: string
+          example: "Pizza"
 
     OrderDto:
       type: object
@@ -107,11 +122,14 @@ components:
         id:
           type: integer
           format: int64
+          example: 1
         tableNumber:
           type: integer
           format: int32
+          example: 5
         status:
           type: string
+          example: "READY"
         items:
           type: array
           items:
@@ -123,8 +141,10 @@ components:
         id:
           type: integer
           format: int64
+          example: 1
         itemName:
           type: string
+          example: "Pizza"
 
     OrderRequestDto:
       description: Request dto provided in the request body to filter orders
@@ -132,11 +152,12 @@ components:
       properties:
         id:
           type: array
-          description: Filter by orderId
+          description: Filter by specific order IDs
           nullable: true
           items:
             type: integer
             format: int64
+          example: [1, 2, 3]
         tableNumber:
           type: array
           description: Filter by tableNumber
@@ -144,15 +165,18 @@ components:
           items:
             type: integer
             format: int32
+          example: [5, 12]
         status:
           type: array
           description: Filter by status
           nullable: true
           items:
             type: string
+          example: ["READY"]
         items:
           type: array
           description: Filter by orderName
           nullable: true
           items:
             type: string
+          example: ["Burger", "Pizza"]

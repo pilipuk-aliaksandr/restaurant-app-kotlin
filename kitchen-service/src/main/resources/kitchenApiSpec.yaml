@@ -1,8 +1,13 @@
 openapi: 3.1.0
 info:
-  title: Order Service Api
-  description: Kitchen Order Service Api
+  title: Kitchen Order Service Api
+  description: |-
+    API for managing the kitchen workflow. This service handles order processing, 
+    cooking status updates, and kitchen-specific order filtering.
   version: 1.0.0
+  contact:
+    name: Alexander Pilipuk
+    email: sashapilipuk@yandex.by
 servers:
   - url: 'http://localhost:8081'
 
@@ -12,7 +17,7 @@ paths:
       tags:
         - Kitchen
       summary: Get all kitchen orders with filter criteria
-      description: Return all kitchen orders details with filter criteria
+      description: Returns a list of kitchen orders filtered by the provided criteria such as IDs, OrderIDs, statuses, or specific item names
       operationId: findOrders
       requestBody:
         description: The search criteria
@@ -22,7 +27,7 @@ paths:
             schema:
               $ref: '#/components/schemas/OrderRequestDto'
       responses:
-        200:
+        '200':
           description: Success
           content:
             application/json:
@@ -30,12 +35,17 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/OrderDto'
+        '400':
+          description: Invalid request body or filter parameters
+        '500':
+          description: Internal server error
 
   /orders/{id}:
     get:
       tags:
         - Kitchen
       summary: Get kitchen order by id
+      description: Retrieve detailed information about a specific kitchen order
       operationId: findById
       parameters:
         - name: id
@@ -52,7 +62,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/OrderDto'
         '404':
-          description: Kitchen Order not found
+          description: Kitchen Order with the specified ID not found
 
 components:
   schemas:
@@ -63,11 +73,16 @@ components:
         id:
           type: integer
           format: int64
+          description: Internal kitchen primary key
+          example: 1
         orderId:
           type: integer
           format: int64
+          description: External ID from the order-service
+          example: 1
         status:
           type: string
+          example: "COOKING"
         items:
           type: array
           items:
@@ -81,14 +96,20 @@ components:
         id:
           type: integer
           format: int64
+          example: 1
         OrderId:
           type: integer
           format: int64
+          description: Reference to the kitchen order ID
+          example: 1
         itemName:
           type: string
           nullable: false
+          example: "Pizza"
         cooked:
           type: boolean
+          description: Indicates if this specific item has finished cooking
+          example: false
 
     OrderRequestDto:
       description: Request dto provided in the request body to filter orders
@@ -96,11 +117,12 @@ components:
       properties:
         id:
           type: array
-          description: Filter by kitchenOrderId
+          description: Filter by a list of kitchen order IDs
           nullable: true
           items:
             type: integer
             format: int64
+          example: [1, 2, 3]
         orderId:
           type: array
           description: Filter by orderId
@@ -108,15 +130,18 @@ components:
           items:
             type: integer
             format: int64
+          example: [1, 2, 3]
         status:
           type: array
           description: Filter by status
           nullable: true
           items:
             type: string
+          example: ["ACCEPTED", "COOKING"]
         items:
           type: array
           description: Filter by itemName
           nullable: true
           items:
             type: string
+          example: ["Pizza", "Burger"]
